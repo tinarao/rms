@@ -1,12 +1,16 @@
 package main
 
 import (
-	"github.com/gofiber/fiber/v3"
-	"github.com/joho/godotenv"
 	"log"
 	"os"
+	"rms-api/controllers"
 	"rms-api/db"
 	"rms-api/redis"
+	"rms-api/telegram"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -17,12 +21,11 @@ func main() {
 
 	redisPassword := os.Getenv("REDIS_PASSWORD")
 	app := fiber.New()
+	app.Use(cors.New())
+	controllers.Setup(app)
 	redis.Init(redisPassword)
 	db.Init()
-
-	app.Get("/hc", func(c fiber.Ctx) error {
-		return c.SendString("Ok")
-	})
+	go telegram.Init()
 
 	log.Fatal(app.Listen(":3000"))
 }
