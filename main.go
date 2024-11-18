@@ -2,10 +2,10 @@ package main
 
 import (
 	"log"
-	"os"
 	"rms-api/controllers"
 	"rms-api/db"
 	"rms-api/redis"
+	"rms-api/services/validator"
 	"rms-api/telegram"
 
 	"github.com/gofiber/fiber/v2"
@@ -19,13 +19,15 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	redisPassword := os.Getenv("REDIS_PASSWORD")
 	app := fiber.New()
+
 	app.Use(cors.New())
 	controllers.Setup(app)
-	redis.Init(redisPassword)
-	db.Init()
-	go telegram.Init()
+	validator.Init()
+
+	redis.Connect()
+	db.Connect()
+	go telegram.Start()
 
 	log.Fatal(app.Listen(":3000"))
 }

@@ -9,7 +9,10 @@ import (
 type Admin struct {
 	ID            uint           `json:"id" gorm:"primaryKey"`
 	AddedProducts []Product      `json:"addedProducts" gorm:"foreignKey:CreatorId"`
-	Phone         string         `json:"email" gorm:"uniqueIndex"`
+	FirstName     string         `json:"firstName"`
+	LastName      string         `json:"lastName"`
+	Email         string         `json:"email" gorm:"uniqueIndex"`
+	Password      string         `json:"-"`
 	CreatedAt     time.Time      `json:"createdAt"`
 	UpdatedAt     time.Time      `json:"updatedAt"`
 	DeletedAt     gorm.DeletedAt `json:"deletedAt" gorm:"index"`

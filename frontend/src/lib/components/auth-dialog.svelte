@@ -54,9 +54,9 @@
 				return;
 			}
 
-			$userStore = {
+			userStore.set({
 				phone: response.data.phone
-			};
+			});
 
 			toast.success('Вход выполнен успешно!');
 		} finally {

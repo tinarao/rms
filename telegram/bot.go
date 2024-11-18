@@ -9,7 +9,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
-func Init() {
+func Start() {
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("TELEGRAM_TOKEN"))
 	if err != nil {
 		log.Fatal(err)
@@ -27,7 +27,8 @@ func Init() {
 		),
 	)
 
-	slog.Info("Bot is ready!")
+	slog.Info("telegram bot is ready")
+
 	updates := bot.GetUpdatesChan(u)
 	for update := range updates {
 		if update.Message != nil { // If we got a message

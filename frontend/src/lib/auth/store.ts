@@ -1,7 +1,7 @@
-import { writable } from 'svelte/store';
+import { persisted } from 'svelte-persisted-store';
 
 interface Session {
     phone: string,
 }
 
-export const userStore = writable<Session>()
+export const userStore = persisted<Session | undefined>("session", undefined)
