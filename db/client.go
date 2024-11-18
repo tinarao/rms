@@ -1,9 +1,10 @@
 package db
 
 import (
+	"log"
+
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"log"
 )
 
 var Client *gorm.DB
@@ -14,7 +15,13 @@ func Init() {
 		log.Fatalf("failed to establish db connection: %s", err)
 	}
 
-	if err = db.AutoMigrate(&User{}, &Admin{}, &Order{}, &Product{}); err != nil {
+	if err = db.AutoMigrate(
+		&User{},
+		&AuthRequest{},
+		&Admin{},
+		&Order{},
+		&Product{},
+	); err != nil {
 		log.Fatalf("failed to run automigrations: %s", err)
 	}
 

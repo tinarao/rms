@@ -9,7 +9,10 @@ export default defineConfig({
 	},
 	server: {
 		proxy: {
-			'/api': 'http://localhost:3000/api',
+			'/api': {
+				target: 'http://localhost:3000/api',
+			},
 		},
+		cors: false
 	},
 });

@@ -5,22 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"rms-api/db"
-	"rms-api/dto"
 	"rms-api/redis"
 
 	"github.com/aidarkhanov/nanoid"
 	"gorm.io/gorm"
 )
-
-func Auth(dto dto.AuthDto) error {
-	user := &db.User{}
-	result := db.Client.Where("phone = ?", dto.Phone).First(&user)
-	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-		//	Create Profile
-	}
-
-	return nil
-}
 
 func CheckAuthRequest(phone string) error {
 	existingRequest := &db.AuthRequest{}

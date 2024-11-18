@@ -7,13 +7,12 @@ import (
 )
 
 type Admin struct {
-	ID                     uint           `json:"id" gorm:"primaryKey"`
-	AddedProducts          []Product      `json:"addedProducts" gorm:"foreignKey:CreatorId"`
-	Phone                  string         `json:"email" gorm:"uniqueIndex"`
-	LatestVerificationCode string         `json:"-"`
-	CreatedAt              time.Time      `json:"createdAt"`
-	UpdatedAt              time.Time      `json:"updatedAt"`
-	DeletedAt              gorm.DeletedAt `json:"deletedAt" gorm:"index"`
+	ID            uint           `json:"id" gorm:"primaryKey"`
+	AddedProducts []Product      `json:"addedProducts" gorm:"foreignKey:CreatorId"`
+	Phone         string         `json:"email" gorm:"uniqueIndex"`
+	CreatedAt     time.Time      `json:"createdAt"`
+	UpdatedAt     time.Time      `json:"updatedAt"`
+	DeletedAt     gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 }
 
 type User struct {

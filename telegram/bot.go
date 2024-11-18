@@ -61,7 +61,3 @@ func Init() {
 		}
 	}
 }
-
-func SendVerificationCode(phone string, code string) {
-
-}

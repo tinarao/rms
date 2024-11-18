@@ -9,32 +9,56 @@
 	import LoginIcon from 'lucide-svelte/icons/log-in';
 
 	import { toast } from 'svelte-sonner';
+	import axios from 'axios';
+	import { PUBLIC_TELEGRAM_BOT_URL } from '$env/static/public';
+	import { userStore } from '$lib/auth/store';
 
 	let phoneInput = $state('');
 	let isLoading = $state(false);
 	const phoneNumberRegexp =
 		/^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/;
 
+	interface ResponseType {
+		message: string;
+		auth_redirect: boolean;
+	}
+
 	const handleSubmit = async () => {
 		isLoading = true;
 		try {
-			console.log('try block');
+			if (!phoneInput) {
+				toast.error('Вы не ввели номер телефона!');
+				return;
+			}
 			const isValidPhoneNumber = phoneNumberRegexp.test(phoneInput);
 			if (!isValidPhoneNumber) {
 				toast.error('Некорректный номер телефона!');
 				return;
 			}
 
-			console.log('validated phone number');
-
-			const response = await fetch('http://localhost:3000/api/auth', {
-				method: 'POST',
-				body: JSON.stringify({
+			const response = await axios.post(
+				'http://localhost:3000/api/auth',
+				{
 					phone: phoneInput
-				})
-			});
+				},
+				{ withCredentials: true }
+			);
 
-			console.log(response);
+			if (response.status > 210) {
+				toast.error('Возникла ошибка при авторизации. Попробуйте позже');
+				return;
+			}
+
+			if (response.status === 201) {
+				window.open(PUBLIC_TELEGRAM_BOT_URL, '_blank');
+				return;
+			}
+
+			$userStore = {
+				phone: response.data.phone
+			};
+
+			toast.success('Вход выполнен успешно!');
 		} finally {
 			isLoading = false;
 		}

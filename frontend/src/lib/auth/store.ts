@@ -1,6 +1,7 @@
+import { writable } from 'svelte/store';
+
 interface Session {
-    id: string
-    user: {
-        id: number
-    }
+    phone: string,
 }
+
+export const userStore = writable<Session>()
