@@ -40,6 +40,7 @@ func Register(c *fiber.Ctx) error {
 	admin := &db.Admin{}
 	result := db.Client.Where("email = ?", data.Email).First(&admin)
 	if result.Error == nil {
+		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
 			"message": "Администратор с таким адресом электронной почты уже зарегистрирован",
 		})
@@ -48,6 +49,7 @@ func Register(c *fiber.Ctx) error {
 	hash, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
 	if err != nil {
 		slog.Error("failed to generate password hash", err)
+		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(fiber.Map{
 			"message": "Ошибка при создании токенов",
 		})
@@ -63,6 +65,7 @@ func Register(c *fiber.Ctx) error {
 	result = db.Client.Create(createdAdmin)
 	if result.Error != nil {
 		slog.Error("Возникла ошибка при создании нового администратора", result.Error)
+		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(fiber.Map{
 			"message": "Возникла ошибка при создании нового администратора",
 		})
