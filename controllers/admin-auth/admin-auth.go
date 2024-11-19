@@ -6,6 +6,7 @@ import (
 	"rms-api/db"
 	"rms-api/services/jwt"
 	"rms-api/services/validator"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -121,7 +122,7 @@ func Login(c *fiber.Ctx) error {
 		})
 	}
 
-	token, err := jwt.GenerateJwtToken(int(admin.ID))
+	token, err := jwt.GenerateJwtToken(admin.Email)
 	if err != nil {
 		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(fiber.Map{
@@ -143,5 +144,34 @@ func Login(c *fiber.Ctx) error {
 			"lastName":  admin.LastName,
 			"email":     admin.Email,
 		},
+	})
+}
+
+func Verify(c *fiber.Ctx) error {
+	header := c.Get("Authorization")
+	token := strings.Split(header, " ")[1]
+
+	sub, err := jwt.DecodeJwtToken(token)
+	if err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"message": "Некорректный токен доступа",
+			"err":     err,
+		})
+	}
+
+	admin := &db.Admin{}
+	res := db.Client.Where("email = ?", sub).First(&admin)
+	if res.Error != nil && errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		c.Status(fiber.StatusNotFound)
+		return c.JSON(fiber.Map{
+			"message": "Администратор не найден",
+		})
+	}
+
+	c.Status(fiber.StatusOK)
+	return c.JSON(fiber.Map{
+		"token": token,
+		"sub":   sub,
 	})
 }
