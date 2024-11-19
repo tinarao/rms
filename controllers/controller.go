@@ -17,4 +17,5 @@ func Setup(app *fiber.App) {
 	})
 
 	api.Post("/aregister", adminauth_controller.Register)
+	api.Post("/alogin", adminauth_controller.Login)
 }

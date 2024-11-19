@@ -1,9 +1,6 @@
 <script lang="ts">
-	import type { PageData } from './$types.js';
 	import RegisterForm from './_forms/register-form.svelte';
 	import * as Card from '$lib/components/ui/card';
-
-	export let data: PageData;
 </script>
 
 <!-- 
@@ -17,6 +14,6 @@
 		<Card.Description>Создайте учётную запись для нового администратора</Card.Description>
 	</Card.Header>
 	<Card.Content>
-		<RegisterForm data={data.form} />
+		<RegisterForm />
 	</Card.Content>
 </Card.Root>
