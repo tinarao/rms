@@ -3,11 +3,11 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
 	import { buttonVariants } from './ui/button';
 
-	let { children } = $props();
+	let { children, size = 'sm' }: { children: any; size?: 'sm' | 'lg' | 'default' } = $props();
 </script>
 
 <DropdownMenu.Root>
-	<DropdownMenu.Trigger class={buttonVariants({ variant: 'outline', size: 'sm' })}>
+	<DropdownMenu.Trigger class={buttonVariants({ variant: 'outline', size })}>
 		{@render children()}
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content>

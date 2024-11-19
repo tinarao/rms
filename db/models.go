@@ -7,15 +7,17 @@ import (
 )
 
 type Admin struct {
-	ID            uint           `json:"id" gorm:"primaryKey"`
-	AddedProducts []Product      `json:"addedProducts" gorm:"foreignKey:CreatorId"`
-	FirstName     string         `json:"firstName"`
-	LastName      string         `json:"lastName"`
-	Email         string         `json:"email" gorm:"uniqueIndex"`
-	Password      string         `json:"-"`
-	CreatedAt     time.Time      `json:"createdAt"`
-	UpdatedAt     time.Time      `json:"updatedAt"`
-	DeletedAt     gorm.DeletedAt `json:"deletedAt" gorm:"index"`
+	ID                 uint           `json:"id" gorm:"primaryKey"`
+	AddedProducts      []Product      `json:"addedProducts" gorm:"foreignKey:CreatorId"`
+	CreatedRestaurants []Restaurant   `json:"createdRestaurants" gorm:"foreignKey:CreatorId"`
+	LatestIP           *string        `json:"latestIp"`
+	FirstName          string         `json:"firstName"`
+	LastName           string         `json:"lastName"`
+	Email              string         `json:"email" gorm:"uniqueIndex"`
+	Password           string         `json:"-"`
+	CreatedAt          time.Time      `json:"createdAt"`
+	UpdatedAt          time.Time      `json:"updatedAt"`
+	DeletedAt          gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 }
 
 type User struct {
@@ -34,6 +36,18 @@ type AuthRequest struct {
 	CreatedAt time.Time `json:"createdAt"`
 }
 
+type Restaurant struct {
+	ID          uint    `json:"id" gorm:"primaryKey"`
+	Name        string  `json:"name" gorm:"uniqueIndex"`
+	Description string  `json:"description"`
+	Orders      []Order `json:"orders" gorm:"foreignKey:RestaurantID"`
+
+	Pictures []string `json:"pictures" gorm:"type:text[]"`
+
+	Creator   Admin `json:"creator"`
+	CreatorId uint  `json:"creatorId"`
+}
+
 type Product struct {
 	ID        uint     `json:"id" gorm:"primaryKey"`
 	SessionId *string  `json:"sessionId"`
@@ -44,9 +58,11 @@ type Product struct {
 }
 
 type Order struct {
-	ID       uint       `json:"id" gorm:"primaryKey"`
-	Products []*Product `json:"products" gorm:"many2many:user_languages;"`
-	Sum      uint       `json:"sum"`
-	User     User       `json:"user"`
-	UserId   uint       `json:"userId"`
+	ID           uint       `json:"id" gorm:"primaryKey"`
+	Products     []*Product `json:"products" gorm:"many2many:user_languages;"`
+	Restaurant   Restaurant `json:"restaurant"`
+	RestaurantID uint       `json:"restaurantId"`
+	Sum          uint       `json:"sum"`
+	User         User       `json:"user"`
+	UserId       uint       `json:"userId"`
 }

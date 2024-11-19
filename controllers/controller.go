@@ -3,6 +3,8 @@ package controllers
 import (
 	adminauth_controller "rms-api/controllers/admin-auth"
 	auth_controller "rms-api/controllers/auth"
+	restaurants_controller "rms-api/controllers/restaurants"
+	"rms-api/middleware"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -19,4 +21,9 @@ func Setup(app *fiber.App) {
 	api.Post("/aregister", adminauth_controller.Register)
 	api.Post("/alogin", adminauth_controller.Login)
 	api.Get("/averify", adminauth_controller.Verify)
+
+	api.Get("/restaurants/all", restaurants_controller.GetAllRestaurants)
+
+	// Protected
+	api.Post("/restaurants/create", middleware.AdminOnly(restaurants_controller.CreateRestaurant))
 }

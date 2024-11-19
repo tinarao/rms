@@ -1,4 +1,12 @@
-1. Ask for a phone number
-2. Redirect to a bot
-3. Request a phone number
-4. If ok - CreateSession()
+Structure
+
+- App
+  - Restaurant 1
+    - Orders
+    - Products
+  - Restaurant 2
+    - Orders
+    - Products
+  - Restaurant 3
+    - Orders
+    - Products

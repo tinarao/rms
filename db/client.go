@@ -21,6 +21,7 @@ func Connect() {
 		&Admin{},
 		&Order{},
 		&Product{},
+		&Restaurant{},
 	); err != nil {
 		log.Fatalf("failed to run automigrations: %s", err)
 	}

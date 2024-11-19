@@ -10,10 +10,6 @@
 	import { goto } from '$app/navigation';
 
 	const handleSubmit = async (event: SubmitEvent) => {
-		if (!event.currentTarget) {
-			return;
-		}
-
 		// @ts-ignore
 		const formData = new FormData(event.currentTarget);
 
