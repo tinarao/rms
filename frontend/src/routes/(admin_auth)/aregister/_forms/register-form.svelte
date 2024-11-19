@@ -6,55 +6,59 @@
 	import axios from 'axios';
 	import { toast } from 'svelte-sonner';
 
+	let isLoading = $state(false);
+
 	const handleSubmit = async (event: SubmitEvent) => {
-		if (!event.currentTarget) {
+		event.preventDefault();
+
+		try {
+			// @ts-ignore
+			const formData = new FormData(event.currentTarget);
+
+			const { success, error, data } = registerFormSchema.safeParse({
+				firstName: formData.get('firstName'),
+				lastName: formData.get('lastName'),
+				email: formData.get('email'),
+				password: formData.get('password')
+			});
+			if (!success) {
+				toast.error(error.errors[0].message);
+				return;
+			}
+
+			const response = await axios.post('api/aregister', data, {
+				validateStatus: () => true
+			});
+			if (response.status !== 201) {
+				toast.error(response.data.message);
+				return;
+			}
+
+			toast.success(response.data.message);
 			return;
+		} finally {
+			isLoading = false;
 		}
-
-		// @ts-ignore
-		const formData = new FormData(event.currentTarget);
-
-		const { success, error, data } = registerFormSchema.safeParse({
-			firstName: formData.get('firstName'),
-			lastName: formData.get('lastName'),
-			email: formData.get('email'),
-			password: formData.get('password')
-		});
-		if (!success) {
-			toast.error(error.errors[0].message);
-			return;
-		}
-
-		const response = await axios.post('api/aregister', data, {
-			validateStatus: () => true
-		});
-		if (response.status !== 201) {
-			toast.error(response.data.message);
-			return;
-		}
-
-		toast.success(response.data.message);
-		return;
 	};
 </script>
 
-<form method="POST" on:submit|preventDefault={(e) => handleSubmit(e)}>
+<form onsubmit={(e) => handleSubmit(e)}>
 	<div>
 		<Label>Имя</Label>
-		<Input required name="firstName" />
+		<Input disabled={isLoading} required name="firstName" />
 	</div>
 	<div>
 		<Label>Фамилия</Label>
-		<Input required name="lastName" />
+		<Input disabled={isLoading} required name="lastName" />
 	</div>
 	<div>
 		<Label>Адрес электронной почты</Label>
-		<Input required name="email" type="email" />
+		<Input disabled={isLoading} required name="email" type="email" />
 	</div>
 	<div>
 		<Label>Пароль</Label>
-		<Input required name="password" type="password" />
+		<Input disabled={isLoading} required name="password" type="password" />
 	</div>
 	<hr class="my-3" />
-	<Button type="submit">Создать</Button>
+	<Button disabled={isLoading} type="submit">Создать</Button>
 </form>

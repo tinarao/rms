@@ -39,6 +39,7 @@ type AuthRequest struct {
 type Restaurant struct {
 	ID          uint    `json:"id" gorm:"primaryKey"`
 	Name        string  `json:"name" gorm:"uniqueIndex"`
+	Slug        string  `json:"slug" gorm:"uniqueIndex"`
 	Description string  `json:"description"`
 	Orders      []Order `json:"orders" gorm:"foreignKey:RestaurantID"`
 

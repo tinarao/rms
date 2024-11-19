@@ -6,6 +6,7 @@ import (
 	"rms-api/services/validator"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gosimple/slug"
 	"gorm.io/gorm"
 )
 
@@ -31,6 +32,15 @@ func GetAllRestaurants(c *fiber.Ctx) error {
 }
 
 func CreateRestaurant(c *fiber.Ctx) error {
+	adminctx := c.UserContext().Value("admin")
+	admin, ok := adminctx.(*db.Admin)
+	if !ok {
+		c.Status(fiber.StatusInternalServerError)
+		return c.JSON(fiber.Map{
+			"message": "Ошибка аутентификации",
+		})
+	}
+
 	data := &createRestaurantDTO{}
 	if err := c.BodyParser(&data); err != nil {
 		c.Status(fiber.StatusBadRequest)
@@ -47,25 +57,23 @@ func CreateRestaurant(c *fiber.Ctx) error {
 		})
 	}
 
-	adminEmail := c.Get("Admin-Email")
-	admin := &db.Admin{}
-
-	res := db.Client.Where("email = ?", adminEmail).First(&admin)
-	if res.Error != nil && errors.Is(res.Error, gorm.ErrRecordNotFound) {
-		c.Status(fiber.StatusNotFound)
-		return c.JSON(fiber.Map{
-			"message": "Ошибка аутентификации",
-		})
-	}
-
+	rNameSlug := slug.Make(data.Name)
 	restaurant := &db.Restaurant{
 		Name:        data.Name,
 		Description: data.Description,
 		CreatorId:   admin.ID,
+		Slug:        rNameSlug,
 	}
 
-	res = db.Client.Create(restaurant)
-	if res.Error != nil && errors.Is(res.Error, gorm.ErrRecordNotFound) {
+	res := db.Client.Create(restaurant)
+	if res.Error != nil {
+		if errors.Is(res.Error, gorm.ErrDuplicatedKey) {
+			c.Status(400)
+			return c.JSON(fiber.Map{
+				"message": "Ресторан с таким названием уже существует",
+			})
+		}
+
 		c.Status(fiber.StatusNotFound)
 		return c.JSON(fiber.Map{
 			"message": "Ошибка при создании ресторана. Попробуйте позже",
@@ -75,5 +83,6 @@ func CreateRestaurant(c *fiber.Ctx) error {
 	c.Status(fiber.StatusCreated)
 	return c.JSON(fiber.Map{
 		"message": "Ресторан успешно создан!",
+		"slug":    rNameSlug,
 	})
 }

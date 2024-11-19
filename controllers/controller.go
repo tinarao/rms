@@ -25,5 +25,6 @@ func Setup(app *fiber.App) {
 	api.Get("/restaurants/all", restaurants_controller.GetAllRestaurants)
 
 	// Protected
-	api.Post("/restaurants/create", middleware.AdminOnly(restaurants_controller.CreateRestaurant))
+	protected := api.Group("/p", middleware.AdminOnly)
+	protected.Post("/restaurants/create", restaurants_controller.CreateRestaurant)
 }

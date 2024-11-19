@@ -15,6 +15,7 @@
 	let isLoading = $state(false);
 
 	const handleSubmit = async (event: SubmitEvent) => {
+		console.log('Token', serverLoadData.token);
 		isLoading = true;
 		event.preventDefault();
 
@@ -31,7 +32,7 @@
 				return;
 			}
 
-			const response = await axios.post('http://localhost:3000/api/restaurants/create', data, {
+			const response = await axios.post('http://localhost:3000/api/p/restaurants/create', data, {
 				validateStatus: () => true,
 				withCredentials: true,
 				headers: {
@@ -45,7 +46,7 @@
 			}
 
 			toast.success(response.data.message);
-			goto(`/dashboard/restaurants/${data.name}`);
+			goto(`/dashboard/restaurants/${response.data.slug}`);
 			return;
 		} finally {
 			isLoading = false;
@@ -63,11 +64,22 @@
 			<Card.Content class="space-y-2">
 				<div>
 					<Label>Название</Label>
-					<Input name="name" disabled={isLoading} placeholder="Название нового ресторана" />
+					<Input
+						required
+						name="name"
+						disabled={isLoading}
+						placeholder="Название нового ресторана"
+					/>
 				</div>
 				<div>
 					<Label>Описание</Label>
-					<Textarea name="description" disabled={isLoading} class="max-h-72" maxlength={500} />
+					<Textarea
+						required
+						name="description"
+						disabled={isLoading}
+						class="max-h-72"
+						maxlength={500}
+					/>
 				</div>
 			</Card.Content>
 			<Card.Footer class="justify-between">
@@ -78,7 +90,12 @@
 						Создать
 					{/if}</Button
 				>
-				<Button disabled={isLoading} variant="ghost" class="hover:bg-red-500 hover:text-white">
+				<Button
+					href="/dashboard"
+					disabled={isLoading}
+					variant="ghost"
+					class="hover:bg-red-500 hover:text-white"
+				>
 					Отменить</Button
 				>
 			</Card.Footer>
