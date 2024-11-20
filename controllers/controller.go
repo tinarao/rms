@@ -23,6 +23,7 @@ func Setup(app *fiber.App) {
 	api.Get("/averify", adminauth_controller.Verify)
 
 	api.Get("/restaurants/all", restaurants_controller.GetAllRestaurants)
+	api.Get("/restaurants/slug/:slug", restaurants_controller.GetRestaurantBySlug)
 
 	// Protected
 	protected := api.Group("/p", middleware.AdminOnly)

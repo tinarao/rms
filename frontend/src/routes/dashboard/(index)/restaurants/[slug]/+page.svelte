@@ -2,4 +2,4 @@
 	let { data } = $props();
 </script>
 
-<h1>{data.restaurantSlug}</h1>
+<h1 class="text-4xl" title="Название ресторана">{data.restaurant.name}</h1>

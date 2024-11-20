@@ -86,3 +86,21 @@ func CreateRestaurant(c *fiber.Ctx) error {
 		"slug":    rNameSlug,
 	})
 }
+
+func GetRestaurantBySlug(c *fiber.Ctx) error {
+	slug := c.Params("slug")
+	restaurant := &db.Restaurant{}
+
+	res := db.Client.Where("slug = ?", slug).First(&restaurant)
+	if res.Error != nil && errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		c.Status(fiber.StatusNotFound)
+		return c.JSON(fiber.Map{
+			"message": "Ресторан не найден",
+		})
+	}
+
+	c.Status(fiber.StatusOK)
+	return c.JSON(fiber.Map{
+		"restaurant": restaurant,
+	})
+}

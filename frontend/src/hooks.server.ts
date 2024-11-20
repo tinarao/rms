@@ -14,8 +14,6 @@ export const handle: Handle = async ({ event, resolve }) => {
             },
             validateStatus: () => true
         })
-        console.log(response.status)
-        console.log(response.data)
         if (response.status !== 200) {
             event.cookies.delete("access_token", { path: '/' })
             return redirect(302, "/alogin")

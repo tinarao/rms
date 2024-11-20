@@ -4,8 +4,6 @@
 	import * as Select from '$lib/components/ui/select';
 	import PlusIcon from 'lucide-svelte/icons/plus';
 	let { children, data } = $props();
-
-	console.log(data.restaurants);
 </script>
 
 <div class="flex h-screen flex-col">
