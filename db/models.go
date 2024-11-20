@@ -37,29 +37,38 @@ type AuthRequest struct {
 }
 
 type Restaurant struct {
-	ID          uint    `json:"id" gorm:"primaryKey"`
-	Name        string  `json:"name" gorm:"uniqueIndex"`
-	Slug        string  `json:"slug" gorm:"uniqueIndex"`
-	Description string  `json:"description"`
-	Orders      []Order `json:"orders" gorm:"foreignKey:RestaurantID"`
+	ID          uint           `json:"id" gorm:"primaryKey"`
+	Name        string         `json:"name" gorm:"uniqueIndex"`
+	Slug        string         `json:"slug" gorm:"uniqueIndex"`
+	Description string         `json:"description"`
+	Pictures    []string       `json:"pictures" gorm:"type:text[]"`
+	Creator     Admin          `json:"creator"`
+	CreatorId   uint           `json:"creatorId"`
+	Orders      []Order        `json:"orders" gorm:"foreignKey:RestaurantID"`
+	Products    []Product      `json:"products" gorm:"foreignKey:RestaurantID"`
+	CreatedAt   time.Time      `json:"createdAt"`
+	UpdatedAt   time.Time      `json:"updatedAt"`
+	DeletedAt   gorm.DeletedAt `json:"deletedAt" gorm:"index"`
+}
 
-	Pictures []string `json:"pictures" gorm:"type:text[]"`
-
-	Creator   Admin `json:"creator"`
-	CreatorId uint  `json:"creatorId"`
+type Product struct {
+	ID             uint       `json:"id" gorm:"primaryKey"`
+	Name           string     `json:"name" gorm:"uniqueIndex"`
+	Slug           string     `json:"slug" gorm:"uniqueIndex"`
+	Description    string     `json:"description"`
+	Tags           []string   `json:"tags" gorm:"type:text[]"`
+	Pictures       []string   `json:"pictures" gorm:"type:text[]"`
+	PurchasesCount uint       `json:"purchases" gorm:"default:0"`
+	IsPublished    bool       `json:"isPublished" gorm:"default:false"`
+	Orders         []*Order   `json:"-" gorm:"many2many:product_orders;"`
+	Restaurant     Restaurant `json:"restaurant"`
+	RestaurantID   uint       `json:"restaurantId"`
+	Creator        User       `json:"creator"`
+	CreatorId      uint       `json:"creatorId"`
 
 	CreatedAt time.Time      `json:"createdAt"`
 	UpdatedAt time.Time      `json:"updatedAt"`
 	DeletedAt gorm.DeletedAt `json:"deletedAt" gorm:"index"`
-}
-
-type Product struct {
-	ID        uint     `json:"id" gorm:"primaryKey"`
-	SessionId *string  `json:"sessionId"`
-	Purchases uint     `json:"purchases"`
-	Orders    []*Order `json:"orders" gorm:"many2many:product_orders;"`
-	Creator   User     `json:"creator"`
-	CreatorId uint     `json:"creatorId"`
 }
 
 type Order struct {

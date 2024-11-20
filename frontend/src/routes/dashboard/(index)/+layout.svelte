@@ -1,14 +1,15 @@
 <script lang="ts">
 	import ModeToggle from '$lib/components/mode-toggle.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import PlusIcon from 'lucide-svelte/icons/plus';
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
-	import PlusIcon from 'lucide-svelte/icons/plus';
+
 	let { children, data } = $props();
 </script>
 
 <div class="flex h-screen flex-col">
-	<header class="flex items-center gap-x-2 border-b px-8 py-2">
+	<header class="flex items-center justify-between border-b px-8 py-2">
 		{#if data.restaurants.length}
 			<DropdownMenu.Root>
 				<DropdownMenu.Trigger
@@ -42,8 +43,9 @@
 				</Button>
 			</div>
 		{/if}
-		<div class="h-full w-0.5 bg-neutral-100 dark:bg-neutral-900"></div>
-		<ModeToggle size="default">Тема</ModeToggle>
+		<div>
+			<ModeToggle size="sm">Тема</ModeToggle>
+		</div>
 	</header>
 	<main class="flex-1 px-8 py-4">
 		{@render children()}
