@@ -28,4 +28,5 @@ func Setup(app *fiber.App) {
 	// Protected
 	protected := api.Group("/p", middleware.AdminOnly)
 	protected.Post("/restaurants/create", restaurants_controller.CreateRestaurant)
+	protected.Patch("/restaurants/edit", restaurants_controller.UpdateRestaurant)
 }

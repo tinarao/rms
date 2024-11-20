@@ -15,6 +15,12 @@ type createRestaurantDTO struct {
 	Description string `json:"description" validate:"required"`
 }
 
+type updateRestaurantDTO struct {
+	Id          uint   `json:"id" validate:"required"`
+	Name        string `json:"name" validate:"required"`
+	Description string `json:"description" validate:"required"`
+}
+
 func GetAllRestaurants(c *fiber.Ctx) error {
 	restaurants := &[]db.Restaurant{}
 	res := db.Client.Find(&restaurants)
@@ -102,5 +108,58 @@ func GetRestaurantBySlug(c *fiber.Ctx) error {
 	c.Status(fiber.StatusOK)
 	return c.JSON(fiber.Map{
 		"restaurant": restaurant,
+	})
+}
+
+func UpdateRestaurant(c *fiber.Ctx) error {
+	data := &updateRestaurantDTO{}
+	if err := c.BodyParser(&data); err != nil {
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"message": "Bad request",
+		})
+	}
+
+	newSlug := slug.Make(data.Name)
+	dup := &db.Restaurant{}
+	res := db.Client.Where("name = ?", data.Name).Or("slug = ?", newSlug).First(&dup)
+	if res.Error == nil {
+		c.Status(400)
+		return c.JSON(fiber.Map{
+			"message": "Ресторан с похожим названием уже существует",
+		})
+	}
+
+	restaurant := &db.Restaurant{}
+	res = db.Client.Where("id = ?", data.Id).First(&restaurant)
+	if res.Error != nil {
+		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
+			c.Status(fiber.StatusNotFound)
+			return c.JSON(fiber.Map{
+				"message": "Ресторан не найден",
+			})
+		}
+
+		c.Status(fiber.StatusInternalServerError)
+		return c.JSON(fiber.Map{
+			"message": "Ошибка при обновлении ресторана",
+		})
+	}
+
+	restaurant.Name = data.Name
+	restaurant.Description = data.Description
+	restaurant.Slug = newSlug
+	res = db.Client.Save(restaurant)
+	if res.Error != nil {
+		c.Status(fiber.StatusInternalServerError)
+		return c.JSON(fiber.Map{
+			"message": "Ошибка при обновлении ресторана",
+		})
+	}
+
+	c.Status(200)
+	return c.JSON(fiber.Map{
+		"message": "Ресторан обновлён!",
+		"slug":    newSlug,
 	})
 }

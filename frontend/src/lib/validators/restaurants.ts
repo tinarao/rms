@@ -7,7 +7,8 @@ export const restaurantSchema = z.object({
     orders: z.any(),
     pictures: z.any(),
     creator: z.any(),
-    creatorId: z.number().positive()
+    creatorId: z.number().positive(),
+    slug: z.string(),
 })
 
 export const createRestaurantFormSchema = z.object({
@@ -21,4 +22,4 @@ export const createRestaurantFormSchema = z.object({
         .max(500, 'Слишком длинное описание!')
 });
 
-export type RegisterFormSchema = z.infer<typeof createRestaurantFormSchema>
+export type Restaurant = z.infer<typeof restaurantSchema>

@@ -47,6 +47,10 @@ type Restaurant struct {
 
 	Creator   Admin `json:"creator"`
 	CreatorId uint  `json:"creatorId"`
+
+	CreatedAt time.Time      `json:"createdAt"`
+	UpdatedAt time.Time      `json:"updatedAt"`
+	DeletedAt gorm.DeletedAt `json:"deletedAt" gorm:"index"`
 }
 
 type Product struct {
