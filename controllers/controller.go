@@ -3,6 +3,7 @@ package controllers
 import (
 	adminauth_controller "rms-api/controllers/admin-auth"
 	auth_controller "rms-api/controllers/auth"
+	dishes_controller "rms-api/controllers/dishes"
 	restaurants_controller "rms-api/controllers/restaurants"
 	"rms-api/middleware"
 
@@ -27,6 +28,8 @@ func Setup(app *fiber.App) {
 
 	// Protected
 	protected := api.Group("/p", middleware.AdminOnly)
-	protected.Post("/restaurants/create", restaurants_controller.CreateRestaurant)
-	protected.Patch("/restaurants/edit", restaurants_controller.UpdateRestaurant)
+	protected.Post("/restaurants/create", restaurants_controller.Create)
+	protected.Patch("/restaurants/edit", restaurants_controller.Update)
+
+	protected.Post("/dishes", dishes_controller.Create)
 }

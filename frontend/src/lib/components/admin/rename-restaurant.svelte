@@ -44,7 +44,7 @@
 			isLoading = false;
 		}
 
-		goto(`/dashboard/manage/restaurants`);
+		goto(`/dashboard`);
 	};
 </script>
 

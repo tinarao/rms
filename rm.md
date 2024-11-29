@@ -3,10 +3,10 @@ Structure
 - App
   - Restaurant 1
     - Orders
-    - Products
+    - Dishes
   - Restaurant 2
     - Orders
-    - Products
+    - Dishes
   - Restaurant 3
     - Orders
-    - Products
+    - Dishes

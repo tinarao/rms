@@ -5,12 +5,15 @@ import (
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 var Client *gorm.DB
 
 func Connect() {
-	db, err := gorm.Open(sqlite.Open("database.db"), &gorm.Config{})
+	db, err := gorm.Open(sqlite.Open("database.db"), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
 	if err != nil {
 		log.Fatalf("failed to establish db connection: %s", err)
 	}
@@ -20,7 +23,7 @@ func Connect() {
 		&AuthRequest{},
 		&Admin{},
 		&Order{},
-		&Product{},
+		&Dish{},
 		&Restaurant{},
 	); err != nil {
 		log.Fatalf("failed to run automigrations: %s", err)

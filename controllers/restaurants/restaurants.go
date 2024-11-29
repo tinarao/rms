@@ -2,6 +2,7 @@ package restaurants_controller
 
 import (
 	"errors"
+	"log/slog"
 	"rms-api/db"
 	"rms-api/services/validator"
 
@@ -37,7 +38,7 @@ func GetAllRestaurants(c *fiber.Ctx) error {
 	})
 }
 
-func CreateRestaurant(c *fiber.Ctx) error {
+func Create(c *fiber.Ctx) error {
 	adminctx := c.UserContext().Value("admin")
 	admin, ok := adminctx.(*db.Admin)
 	if !ok {
@@ -63,16 +64,23 @@ func CreateRestaurant(c *fiber.Ctx) error {
 		})
 	}
 
+	picDefaultArr := make([]db.RestaurantPicture, 0)
+	ordersDefaultArr := make([]db.Order, 0)
+	dishesDefaultArr := make([]db.Dish, 0)
 	rNameSlug := slug.Make(data.Name)
 	restaurant := &db.Restaurant{
 		Name:        data.Name,
 		Description: data.Description,
 		CreatorId:   admin.ID,
 		Slug:        rNameSlug,
+		Pictures:    picDefaultArr,
+		Orders:      ordersDefaultArr,
+		Dishes:      dishesDefaultArr,
 	}
 
 	res := db.Client.Create(restaurant)
 	if res.Error != nil {
+		slog.Error(res.Error.Error())
 		if errors.Is(res.Error, gorm.ErrDuplicatedKey) {
 			c.Status(400)
 			return c.JSON(fiber.Map{
@@ -80,7 +88,7 @@ func CreateRestaurant(c *fiber.Ctx) error {
 			})
 		}
 
-		c.Status(fiber.StatusNotFound)
+		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(fiber.Map{
 			"message": "Ошибка при создании ресторана. Попробуйте позже",
 		})
@@ -97,7 +105,7 @@ func GetRestaurantBySlug(c *fiber.Ctx) error {
 	slug := c.Params("slug")
 	restaurant := &db.Restaurant{}
 
-	res := db.Client.Where("slug = ?", slug).First(&restaurant)
+	res := db.Client.Preload("Dishes").Preload("Orders").Preload("Pictures").Where("slug = ?", slug).First(&restaurant)
 	if res.Error != nil && errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		c.Status(fiber.StatusNotFound)
 		return c.JSON(fiber.Map{
@@ -111,7 +119,7 @@ func GetRestaurantBySlug(c *fiber.Ctx) error {
 	})
 }
 
-func UpdateRestaurant(c *fiber.Ctx) error {
+func Update(c *fiber.Ctx) error {
 	data := &updateRestaurantDTO{}
 	if err := c.BodyParser(&data); err != nil {
 		c.Status(fiber.StatusBadRequest)

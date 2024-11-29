@@ -1,14 +1,21 @@
 import { z } from "zod";
+import { dishSchema } from "./dish";
 
 export const restaurantSchema = z.object({
     id: z.number().positive(),
     name: z.string(),
-    description: z.string(),
-    orders: z.any(),
-    pictures: z.any(),
-    creator: z.any(),
-    creatorId: z.number().positive(),
     slug: z.string(),
+    description: z.string(),
+    creatorId: z.number().positive(),
+
+    creator: z.any(),
+    orders: z.array(z.any()).nullable(),
+    dishes: z.array(z.any()).nullable(),
+    pictures: z.array(z.any()).nullable(),
+
+    createdAt: z.string(),
+    updatedAt: z.string(),
+    deletedAt: z.string().nullable(),
 })
 
 export const createRestaurantFormSchema = z.object({

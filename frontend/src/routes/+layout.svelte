@@ -5,6 +5,6 @@
 	import { Toaster } from '$lib/components/ui/sonner';
 </script>
 
-<Toaster />
+<Toaster richColors />
 <ModeWatcher defaultMode="dark" />
 {@render children()}

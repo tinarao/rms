@@ -4,6 +4,7 @@
 	import PlusIcon from 'lucide-svelte/icons/plus';
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import AdminProfile from '$lib/components/admin/admin-profile.svelte';
 
 	let { children, data } = $props();
 </script>
@@ -17,12 +18,19 @@
 					class={buttonVariants({ variant: 'outline' })}>Рестораны</DropdownMenu.Trigger
 				>
 				<DropdownMenu.Content>
+					{#each data.restaurants as restaurant}
+						<DropdownMenu.Sub>
+							<DropdownMenu.SubTrigger>
+								<span>{restaurant.name}</span>
+							</DropdownMenu.SubTrigger>
+							<DropdownMenu.SubContent>
+								<DropdownMenu.Item href="{restaurant.slug}?block=dishes">Блюда</DropdownMenu.Item>
+								<DropdownMenu.Item href="{restaurant.slug}?block=orders">Заказы</DropdownMenu.Item>
+							</DropdownMenu.SubContent>
+						</DropdownMenu.Sub>
+					{/each}
+
 					<DropdownMenu.Group>
-						{#each data.restaurants as restaurant}
-							<DropdownMenu.Item href={`/dashboard/restaurants/${restaurant.slug}`}
-								>{restaurant.name}</DropdownMenu.Item
-							>
-						{/each}
 						<DropdownMenu.Separator />
 						<DropdownMenu.Item href="/dashboard/manage/restaurants">
 							<PlusIcon class="mr-2 size-4" /> Управление ресторанами
@@ -45,6 +53,7 @@
 		{/if}
 		<div>
 			<ModeToggle size="sm">Тема</ModeToggle>
+			<AdminProfile />
 		</div>
 	</header>
 	<main class="flex-1 px-8 py-4">

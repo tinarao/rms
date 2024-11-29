@@ -2,6 +2,8 @@ import axios from "axios";
 import type { LayoutServerLoad } from "./$types";
 import { redirect } from "@sveltejs/kit";
 import { restaurantSchema } from "$lib/validators/restaurants";
+import { dishSchema, type Dish } from "$lib/validators/dish";
+import { z } from "zod";
 
 export const load: LayoutServerLoad = async ({ params }) => {
     if (!params.slug) {
@@ -22,8 +24,16 @@ export const load: LayoutServerLoad = async ({ params }) => {
         return redirect(302, "/dashboard")
     }
 
+    let dishesResult = z.array(dishSchema).safeParse(restaurant.dishes)
+    if (!dishesResult.success) {
+        console.error(dishesResult.error.errors[0])
+        // blyat what to do here
+        return redirect(302, "/dashboard")
+    }
+
     return {
         restaurantSlug: params.slug,
-        restaurant: restaurant
+        restaurant: restaurant,
+        dishes: dishesResult.data
     }
 }
