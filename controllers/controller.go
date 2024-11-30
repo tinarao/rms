@@ -32,4 +32,5 @@ func Setup(app *fiber.App) {
 	protected.Patch("/restaurants/edit", restaurants_controller.Update)
 
 	protected.Post("/dishes", dishes_controller.Create)
+	protected.Get("/dishes/:slug", dishes_controller.GetPrivateDataBySlug)
 }

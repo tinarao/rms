@@ -3,6 +3,7 @@ import { z } from "zod";
 export const dishSchema = z.object({
     id: z.number().positive(),
     name: z.string(),
+    slug: z.string(),
     description: z.string(),
     tags: z.array(z.string()).nullable().optional(),
     pictures: z.array(z.string()).nullable().optional(),

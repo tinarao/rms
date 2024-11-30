@@ -24,15 +24,19 @@
 								<span>{restaurant.name}</span>
 							</DropdownMenu.SubTrigger>
 							<DropdownMenu.SubContent>
-								<DropdownMenu.Item href="{restaurant.slug}?block=dishes">Блюда</DropdownMenu.Item>
-								<DropdownMenu.Item href="{restaurant.slug}?block=orders">Заказы</DropdownMenu.Item>
+								<DropdownMenu.Item href="/dashboard/restaurants/{restaurant.slug}?block=dishes"
+									>Блюда</DropdownMenu.Item
+								>
+								<DropdownMenu.Item href="/dashboard/restaurants/{restaurant.slug}?block=orders"
+									>Заказы</DropdownMenu.Item
+								>
 							</DropdownMenu.SubContent>
 						</DropdownMenu.Sub>
 					{/each}
 
 					<DropdownMenu.Group>
 						<DropdownMenu.Separator />
-						<DropdownMenu.Item href="/dashboard/manage/restaurants">
+						<DropdownMenu.Item href="/dashboard">
 							<PlusIcon class="mr-2 size-4" /> Управление ресторанами
 						</DropdownMenu.Item>
 					</DropdownMenu.Group>

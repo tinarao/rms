@@ -1,6 +1,7 @@
 package dishes_controller
 
 import (
+	"errors"
 	"log/slog"
 	"rms-api/db"
 	"rms-api/services/validator"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gosimple/slug"
+	"gorm.io/gorm"
 )
 
 type createDishDTO struct {
@@ -64,6 +66,7 @@ func Create(c *fiber.Ctx) error {
 		RestaurantID: data.RestaurantId,
 		CreatorId:    admin.ID,
 		CreatedAt:    time.Now(),
+		Slug:         pNameSlug,
 	}
 	res = db.Client.Create(dish)
 	if res.Error != nil {
@@ -77,5 +80,25 @@ func Create(c *fiber.Ctx) error {
 	c.Status(fiber.StatusCreated)
 	return c.JSON(fiber.Map{
 		"message": "Продукт создан!",
+	})
+}
+
+func GetPrivateDataBySlug(c *fiber.Ctx) error {
+	slug := c.Params("slug")
+
+	dish := &db.Dish{}
+	res := db.Client.Where("slug = ?", slug).Preload("Orders").Preload("Restaurant").First(&dish)
+	if res.Error != nil {
+		if errors.Is(res.Error, gorm.ErrRecordNotFound) {
+			c.Status(fiber.StatusNotFound)
+			return c.JSON(fiber.Map{
+				"message": "Блюдо не найдено",
+			})
+		}
+	}
+
+	c.Status(200)
+	return c.JSON(fiber.Map{
+		"dish": dish,
 	})
 }
